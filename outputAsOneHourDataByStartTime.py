@@ -1,33 +1,6 @@
 import csv
-import time
-time_start = time.clock()
-f_1610 = open('201610-citibike-tripdata.csv','r')
-f_1611 = open('201611-citibike-tripdata.csv','r')
-f_1612 = open('201612-citibike-tripdata.csv','r')
-f_1701 = open('201701-citibike-tripdata.csv','r')
-f_1702 = open('201702-citibike-tripdata.csv','r')
-f_1703 = open('201703-citibike-tripdata.csv','r')
-f_1704 = open('201704-citibike-tripdata.csv','r')
-f_1705 = open('201705-citibike-tripdata.csv','r')
-f_1706 = open('201706-citibike-tripdata.csv','r')
-f_1707 = open('201707-citibike-tripdata.csv','r')
-f_1708 = open('201708-citibike-tripdata.csv','r')
-f_1709 = open('201709-citibike-tripdata.csv','r')
-
-w_2 = open('sortByStopTimeData.csv','w')
-
-next(csv.reader(f_1610))
-next(csv.reader(f_1611))
-next(csv.reader(f_1612))
-next(csv.reader(f_1701))
-next(csv.reader(f_1702))
-next(csv.reader(f_1703))
-next(csv.reader(f_1704))
-next(csv.reader(f_1705))
-next(csv.reader(f_1706))
-next(csv.reader(f_1707))
-next(csv.reader(f_1708))
-next(csv.reader(f_1709))
+f = open('sortByStartTimeData.csv','r')
+w = open('outputAsOneHourDataByStartTime.csv','w')
 
 def stringToTimeStamp(t): # time = '2017-04-01 00:01:54'
 	t = t.split(' ')
@@ -135,144 +108,37 @@ def timeStampToString(timeStamp): # time = '2017-04-01 00:01:54'
 	return str(year) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2) + ' ' + str(hour).zfill(2) + ':' + str(minute).zfill(2) + ':' + str(second).zfill(2)
 
 
-allData = []
-
-print '1610'
-for row in csv.reader(f_1610):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1611'
-for row in csv.reader(f_1611):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1612'
-for row in csv.reader(f_1612):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1701'
-for row in csv.reader(f_1701):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1702'
-for row in csv.reader(f_1702):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1703'
-for row in csv.reader(f_1703):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1704'
-for row in csv.reader(f_1704):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1705'
-for row in csv.reader(f_1705):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1706'
-for row in csv.reader(f_1706):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1707'
-for row in csv.reader(f_1707):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1708'
-for row in csv.reader(f_1708):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-print '1709'
-for row in csv.reader(f_1709):
-	if len(row) > 7:
-		allData.append(row)
-	else:
-		print len(row)
-
-print 'Length of allData = ' + str(len(allData))
-
-print 'Start sorting StopTime.'
-allData = sorted(allData, key=lambda x: (int(x[7]), stringToTimeStamp(x[2])))
-print 'Sorted.'
-
 '''
-t = ''
-for element in allData:
-	if t != element[7]:
-		print element[7]
-		t = element[7]
-	csv.writer(w_2).writerow(element)
-
+timeline = []
+time = '2016-10-01 00:00:00'
+timeline.append(time)
+while stringToTimeStamp(time) < stringToTimeStamp('2017-10-31 23:59:59')
+	time = timeStampToString(stringToTimeStamp(time) + 3600)
+	timeline.append(time)
 '''
-w = open('outputAsOneHourDataByStopTime.csv','w')
+# 328,2016-10-01 00:00:07,2016-10-01 00:05:35,471,Grand St & Havemeyer St,40.71286844,-73.95698119,3077,Stagg St & Union Ave,40.70877084,-73.95095259,25254,Subscriber,1992,1
+# station = row[3]
+# time = row[1]
+# station, time, count
 
 count = 0
 time = '2016-10-01 00:00:00'
 sta = ''
-for row in allData:
-	if len(row) >= 7:
-		if sta != row[7] and sta != '':
+for row in csv.reader(f):
+	if len(row) >= 4:
+		if sta != row[3] and sta != '':
 			print sta
 			line = [sta, time, str(count)]
 			csv.writer(w).writerow(line)
-			time = timeStampToString(int(stringToTimeStamp(row[2])/3600)*3600)
+			time = timeStampToString(int(stringToTimeStamp(row[1])/3600)*3600)
 			count = 0
-		if stringToTimeStamp(row[2]) >= stringToTimeStamp(time)+3600:
-			line = [row[7], time, str(count)]
+		if stringToTimeStamp(row[1]) >= stringToTimeStamp(time)+3600:
+			line = [row[3], time, str(count)]
 			csv.writer(w).writerow(line)
-			time = timeStampToString(int(stringToTimeStamp(row[2])/3600)*3600)
+			time = timeStampToString(int(stringToTimeStamp(row[1])/3600)*3600)
 			count = 0
-		sta = row[7]
+		sta = row[3]
 		count = count + 1
-line = [row[7], time, str(count)]
-csv.writer(w).writerow(line)
-
-i = open('stationListFromStopTime.csv','w')
-
-stationList = []
-station = ['','','','']
-for row in allData:
-	if len(row) >= 7:
-		if row[7] != station[0]:
-			station = [row[7],row[8],row[9],row[10]]
-			stationList.append(station)
-			print 'station id = ' + str(station[0]) + ' len = ' + str(len(stationList))
-print 'The number of station is ' + str(len(stationList))
-
-#stationList = sorted(stationList, key=lambda x: int(x[0]))
-
-for element in stationList:
-	csv.writer(i).writerow(element)
-
-print 'StopTime Done.'
-
-print time.clock() - time_start
-
-
-
-
-
-
+		
 
 
